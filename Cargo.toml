@@ -1,0 +1,7 @@
+[package]
+name = "symdot"
+version = "0.1.0"
+authors = ["Javier López <javilopeza9@gmail.com>"]
+
+[dependencies]
+dirs = "1.0.4"
