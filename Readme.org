@@ -1,29 +1,6 @@
+* WIP
 * Functionality
   -add:  adds new file to keep synced
   -sync: syncs specified files from config file
   -syncall: syncs all files from config file
-  -init configure dots directory
 
-* Behaviour
-** add
--if specified file or dir exists, writes it to the config file, copies it to the dotdir, and makes the symlink
--if it doesnt, prints the error
-
-** sync / syncallx
- -Checks if file from cfg file exists: 
-  if it doesnt exist, creates the necessary folders and creates the symlink 
-  if it does exist, it overwrites the file with a symlink
-  if it is the correct symlink, do nothing
-
-** init
-   checks if cfg file exists, if not, create it
-
-* Config file(TOML) symdot.toml
- github repo folder name
-list of files tracked
-list of files dirs tracked
-
-* Packages
-  toml parser
-  std
-  
