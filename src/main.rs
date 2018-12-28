@@ -3,7 +3,7 @@
 use std::env;
 use std::io;
 use std::option;
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 extern crate dirs;
 
 //Get home dir path
@@ -22,16 +22,29 @@ fn get_dots() -> Result<PathBuf, io::Error> {
         Err(x) => Err(x),
     }
 }
-
-fn symlink(dots_path: PathBuf) -> PathBuf {
+//Get the symlink file path
+fn get_symlink_path(dots_path: PathBuf) -> PathBuf {
     let home_path = get_home().unwrap();
-    let mut file_path = dots_path.strip_prefix(home_path).unwrap().to_path_buf();
-    file_path
+    let dot_name = PathBuf::from(get_dots().unwrap().file_name().unwrap());
+    let sym_file = dots_path
+        .strip_prefix(&home_path)
+        .unwrap()
+        .strip_prefix(dot_name)
+        .unwrap();
+    sym_file.to_path_buf()
 }
 
+//Create the symlink
+fn symlink(git_path: PathBuf){
+    let symlink_path = get_symlink_path(git_path);
+    //algo si no existe
+    let symlink_path_info = symlink_path.metadata().unwrap().file_type();
+    if 
+    
+}
 fn main() {
     println!("{:?}", get_home().unwrap());
     println!("{:?}", get_dots().unwrap());
     let test = Path::new("/home/regul4r/code/symdot/src").to_path_buf();
-    println!("{:?}", symlink(test)); 
+    println!("{:?}", symlink(test));
 }
