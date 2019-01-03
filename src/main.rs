@@ -1,8 +1,10 @@
 #![allow(unused_imports)]
 
 use std::env;
+use std::fs::remove_file;
 use std::io;
 use std::option;
+use std::os::unix::fs;
 use std::path::{Path, PathBuf};
 extern crate dirs;
 
@@ -35,16 +37,46 @@ fn get_symlink_path(dots_path: PathBuf) -> PathBuf {
 }
 
 //Create the symlink
-fn symlink(git_path: PathBuf){
-    let symlink_path = get_symlink_path(git_path);
-    //algo si no existe
-    let symlink_path_info = symlink_path.metadata().unwrap().file_type();
-    if 
-    
+fn create_symlink(git_path: PathBuf) -> Result<String, io::Error> { 
+    //TODO better string returns
+    let symlink_path = get_symlink_path(git_path.to_path_buf());
+    if !symlink_path.exists() {
+        fs::symlink(git_path, symlink_path.to_path_buf())?;
+    } else {
+        let symlink_file_type = symlink_path.metadata().unwrap().file_type();
+        if symlink_file_type.is_symlink() {
+            if symlink_path.read_link().unwrap() != git_path {
+                remove_file(symlink_path.to_path_buf())?;
+                fs::symlink(git_path, symlink_path.to_path_buf())?;
+            }
+        } else if symlink_file_type.is_file() {
+            println!("Regular File: {}", symlink_path.to_str().unwrap());
+        }
+    }
+    Ok(symlink_path.to_path_buf().to_str().unwrap().to_string())
 }
+
+fn iterator(path : &PathBuf) -> std::io::Result<()>{
+    // for entry in &path.read_dir()?{
+    //     let file_type = entry?.file_type()?;
+    //     if file_type.is_dir(){
+    //         iterator(entry?.path()); 
+    //     } else if file_type.is_file(){
+    //         create_symlink(entry?.path());
+    //     }
+    // }
+    path.read_dir()?.for_each(|x|{
+        if x.file_type()?.is_file(){
+            
+        }
+    })
+    //Ok(())
+}
+
+
 fn main() {
     println!("{:?}", get_home().unwrap());
     println!("{:?}", get_dots().unwrap());
     let test = Path::new("/home/regul4r/code/symdot/src").to_path_buf();
-    println!("{:?}", symlink(test));
+    println!("{:?}", create_symlink(test));
 }
