@@ -56,21 +56,16 @@ fn create_symlink(git_path: PathBuf) -> Result<String, io::Error> {
     Ok(symlink_path.to_path_buf().to_str().unwrap().to_string())
 }
 
-fn iterator(path : &PathBuf) -> std::io::Result<()>{
-    // for entry in &path.read_dir()?{
-    //     let file_type = entry?.file_type()?;
-    //     if file_type.is_dir(){
-    //         iterator(entry?.path()); 
-    //     } else if file_type.is_file(){
-    //         create_symlink(entry?.path());
-    //     }
-    // }
-    path.read_dir()?.for_each(|x|{
-        if x.file_type()?.is_file(){
-            
+fn iterator(dir_path : PathBuf) -> std::io::Result<()>{
+    for entry in dir_path.read_dir()?{
+        let path = entry?.path(); 
+        if path.is_dir(){
+            iterator(path.to_path_buf())?; 
+        } else if path.is_file(){
+            create_symlink(path.to_path_buf())?;
         }
-    })
-    //Ok(())
+    }
+    Ok(())
 }
 
 
